@@ -1,4 +1,18 @@
 #include <bits/stdc++.h>
+#include "../lib/graph/graph.h"
+
+using namespace std;
+using ll = long long;
+
 int main() {
-    std::cout << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA";
+    Graph steamGraph{};
+
+    // {v, w}
+
+    // vector<vector<pair<int, int>>> adj(n);
+    //
+
 }
+
+
+
