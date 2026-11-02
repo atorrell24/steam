@@ -34,8 +34,8 @@ vector<string> generateTagList() {
 
 Graph::Graph()
 {
-    int n = 50; // number of games
-    int k = 3; // max connections per game
+    int n = 90; // number of games
+    int k = 8; // max connections per game
 
     vector<Game> games;
     if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
@@ -70,7 +70,7 @@ Graph::Graph()
 
     //construct adjacencies/weights
     for (int i = 0; i < n; ++i) {
-        // {number of different tags, id of the other game}
+        // {game, weight}
         vector<pair<Game, int>> weights;
 
         for (int j = 0; j < n; ++j) {
@@ -84,12 +84,29 @@ Graph::Graph()
         {
             return a.second < b.second;
         });
-        adj[games[i]].assign(weights.begin(), weights.begin() + k);
+        std::move(weights.begin(), weights.begin() + k, std::back_inserter(adj[games[i]]));
     }
     v = adj.size();
     e = adj.size() * k;
 
-    //write to .txt here
+    //write to .csv
+    std::ofstream graphf("lib/graph/graph.csv");
+    if (!graphf.is_open())
+    {
+        std::cerr << "error writing to graph.csv";
+        return;
+    }
+    for (auto& i : adj)
+    {
+        graphf << i.first.id << endl;
+        const char* sep = "";
+        for (auto& j : i.second)
+        {
+            graphf << sep << j.first.id << "," << j.second;
+            sep = ",";
+        }
+        graphf << endl;
+    }
 }
 
 std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNode(int gameid)
