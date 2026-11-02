@@ -4,16 +4,7 @@
 #include <string>
 #include <vector>
 
-struct Game
-{
-    int appID = 0;
-    std::string name;
-    std::string releaseDate;
-    std::string owners;
-    std::vector<std::string> publishers;
-    std::vector<std::string> tags;
-
-};
+#include "csv_parser.h"
 
 bool readField(std::stringstream& ss, std::string& field)
 
@@ -44,7 +35,7 @@ bool readField(std::stringstream& ss, std::string& field)
 
 
 
-bool loadGames(const std::string& path) {
+bool loadGames(const std::string& path, std::vector<Game>& games) {
     std::ifstream file(path);
 
     if (!file.is_open()) {
@@ -76,6 +67,16 @@ bool loadGames(const std::string& path) {
 
         //publishers
         readField(ss, field);
+        std::stringstream listStream(field);
+        std::string piece;
+        
+        while (std::getline(listStream, piece, ','))
+        {
+            g.publishers.push_back(piece);
+
+        }
+        games.push_back(g);
+        
         
 
     }
