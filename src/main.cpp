@@ -1,22 +1,37 @@
-#include <bits/stdc++.h>
-#include "../lib/graph/graph.h"
 
-using namespace std;
-using ll = long long;
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+#include "../lib/csv/csv_parser.h"   // Game, loadGames
+#include "../lib/graph/graph.h"      // Graph
 
 int main() {
-    ifstream graphf("lib/graph/graph.txt");
-    //
+    std::cout << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA\n";
+
+    Graph steamGraph;   
+
+    std::ifstream graphf("lib/graph/graph.txt");
     if (!graphf)
     {
-        //only build graph if .txt doesn't exist. else, read from .txt.
-        Graph steamGraph;
-    }else
-    {
-        //read from graph.txt here
+        // No saved graph yet: build it from the CSV.
+        std::vector<Game> games;
+        if (!loadGames("lib/csv/sample.csv", games)) {
+            return 1;   
+        }
+        std::cout << "Loaded " << games.size() << " games\n";
+
+        // TEMPORARY: confirms the parser still works after the merge. Remove once the graph is connected.
+        for (const Game& g : games) {
+            std::cout << g.id << " | " << g.title
+                      << " | publishers: " << g.publishers.size() << '\n';
+        }
+
+        // TODO: add games to steamGraph (depends on Graph's interface)
     }
-    cout << "system for thematically evaulating arrays of media";
+    else
+    {
+        // TODO: read the saved graph from graph.txt
+    }
+    return 0;
 }
-
-
-

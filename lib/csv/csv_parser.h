@@ -1,20 +1,22 @@
-#ifndef STEAM_CSV_PARSER_H
-#define STEAM_CSV_PARSER_H
-#endif //STEAM_CSV_PARSER_H
+
 #pragma once
-#include <bits/stdc++.h>
 
-using namespace std;
+#include <string>
+#include <vector>
 
-struct Game {
+struct Game
+{
     int id = 0;
-    __int128 mask = 0;
-    vector<string> tags;
-    string releaseDate;
-    string title;
-    string owners;
+    __int128 mask =0;
+    std::string title;
+    std::string releaseDate;
+    std::string owners;
     std::vector<std::string> publishers;
+    std::vector<std::string> tags;
     Game() = default;
-    Game(int gameid);
+    Game(int gameid);  
     bool operator<(const Game& other) const;
+
 };
+
+bool loadGames(const std::string& path, std::vector<Game>& games);
