@@ -1,84 +1,94 @@
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-
 #include "csv_parser.h"
 
-bool readField(std::stringstream& ss, std::string& field)
+#include <fstream>    
+#include <sstream>    
+#include <iostream>   
 
+
+
+// Orders games by id, so Game can be stored in std::set / std::map.
+bool Game::operator<(const Game& other) const
 {
-    
-    field.clear(); 
+    return id < other.id;
+}
 
-    int nextChar = ss.peek();
-    
+
+Game::Game(int gameid)
+{
+    id = gameid;
+}
+
+// ---------- CSV parsing (from anthony_branch) ----------
+
+// Reads the next CSV field from ss into `field`, handling quoted fields
+// that contain commas. Quotes are removed from the result.
+// Returns true if a field was read, false if the line had nothing left.
+bool readField(std::stringstream& ss, std::string& field)
+{
+    field.clear();                     
+
+    int nextChar = ss.peek();          
     if (nextChar == EOF)
     {
-        return false;
+        return false;                  
     }
 
     if (nextChar == '"')
     {
-        ss.get();
-        std::getline(ss, field, '"');
-        ss.ignore();
+        ss.get();                         
+        std::getline(ss, field, '"');      
+        ss.ignore();                      
     }
     else
     {
-        std::getline(ss,field, ',');
+        std::getline(ss, field, ',');     
     }
-
     return true;
 }
 
 
-
-bool loadGames(const std::string& path, std::vector<Game>& games) {
+bool loadGames(const std::string& path, std::vector<Game>& games)
+{
     std::ifstream file(path);
-
-    if (!file.is_open()) {
-        std::cerr << "Could not open " << path << '\n';  
+    if (!file.is_open())
+    {
+        std::cerr << "Could not open " << path << '\n';
         return false;
     }
 
     std::string line;
-    std::getline(file, line);  // skip header line in csv
+    std::getline(file, line);          // skip the header row
 
-    while (std::getline(file, line)) 
+    while (std::getline(file, line))
     {
+        // Strip the '\r' left by Windows line endings.
         if (!line.empty() && line.back() == '\r') line.pop_back();
 
         std::stringstream ss(line);
         Game g;
         std::string field;
 
-        //appID
+        // Column 1: AppID (text -> int)
         readField(ss, field);
-        g.appID = std::stoi(field);
+        g.id = std::stoi(field);
 
-        //name of game
-        readField(ss, g.name);
-        //release date
+        // Columns 2-4: copied as-is
+        readField(ss, g.title);
         readField(ss, g.releaseDate);
-        //owners
         readField(ss, g.owners);
 
-        //publishers
+        // Column 5: Publishers, split on commas into the vector
         readField(ss, field);
         std::stringstream listStream(field);
         std::string piece;
-        
         while (std::getline(listStream, piece, ','))
         {
             g.publishers.push_back(piece);
-
         }
-        games.push_back(g);
-        
+
         
 
+        games.push_back(g);
     }
     return true;
 }
