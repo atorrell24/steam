@@ -5,13 +5,17 @@ using namespace std;
 using ll = long long;
 
 int main() {
-    Graph steamGraph{};
-
-    // {v, w}
-
-    // vector<vector<pair<int, int>>> adj(n);
+    ifstream graphf("lib/graph/graph.txt");
     //
-
+    if (!graphf)
+    {
+        //only build graph if .txt doesn't exist. else, read from .txt.
+        Graph steamGraph;
+    }else
+    {
+        //read from graph.txt here
+    }
+    cout << "system for thematically evaulating arrays of media";
 }
 
 
