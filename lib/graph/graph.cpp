@@ -36,6 +36,7 @@ Graph::Graph()
 {
     int n = 90; // number of games
     int k = 8; // max connections per game
+    int t = 10; // max tags per game
 
     vector<Game> games;
     if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
@@ -49,7 +50,7 @@ Graph::Graph()
     for (auto& i : games)
     {
         std::set<int> addedtags;
-        while (i.tags.size() < 10)
+        while (i.tags.size() < t)
         {
             int rngtag = dist(gen);
             if (addedtags.count(rngtag) == 0)
