@@ -59,7 +59,7 @@ bool readField(std::stringstream& ss, std::string& field)
 }
 
 
-bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, int n)
 {
     std::ifstream file(path);
     if (!file.is_open())
@@ -98,8 +98,6 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
         {
             g.publishers.push_back(piece);
         }
-
-        
 
         games.emplace(g.id, g);
     }

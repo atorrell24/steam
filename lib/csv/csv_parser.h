@@ -14,7 +14,7 @@ struct Game
     std::vector<std::string> publishers;
     std::vector<std::string> tags;
     Game() = default;
-    Game(int gameid);  
+    Game(int gameid);
     bool operator<(const Game& other) const;
     void printmask();
 };
