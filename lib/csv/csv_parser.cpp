@@ -7,12 +7,12 @@
 // Orders games by id, so Game can be stored in std::set / std::map.
 bool Game::operator<(const Game& other) const
 {
-    return id < other.id;
+    return title < other.title;
 }
 
-Game::Game(int gameid)
+Game::Game(std::string gametitle)
 {
-    id = gameid;
+    title = gametitle;
 }
 
 void Game::printmask()
@@ -98,8 +98,6 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
         {
             g.publishers.push_back(piece);
         }
-
-        
 
         games.emplace(g.id, g);
     }
