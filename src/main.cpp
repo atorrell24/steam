@@ -10,10 +10,8 @@
 int main() {
     std::cout << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA\n";
 
-    Graph steamGraph;   
-
-    std::ifstream graphf("lib/graph/graph.txt");
-    if (!graphf)
+    std::ifstream graphf("lib/graph/graph.csv");
+    if (graphf) //change to !graphf for final
     {
         // No saved graph yet: build it from the CSV.
         std::unordered_map<int, Game> games;
@@ -33,7 +31,7 @@ int main() {
     }
     else
     {
-        // TODO: read the saved graph from graph.txt
+        // TODO: read the saved graph from graph.csv
     }
     return 0;
 }

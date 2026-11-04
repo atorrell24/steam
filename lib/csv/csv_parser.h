@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -8,7 +7,7 @@
 struct Game
 {
     int id = 0;
-    __int128 mask =0;
+    unsigned __int128 mask = 0;
     std::string title;
     std::string releaseDate;
     std::string owners;
@@ -17,7 +16,7 @@ struct Game
     Game() = default;
     Game(int gameid);  
     bool operator<(const Game& other) const;
-
+    void printmask();
 };
 
 bool loadGames(const std::string& path, std::unordered_map<int, Game>& games);

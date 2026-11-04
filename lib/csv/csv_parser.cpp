@@ -1,10 +1,8 @@
 #include "csv_parser.h"
-
 #include <fstream>    
 #include <sstream>    
-#include <iostream>   
-
-
+#include <iostream>
+#include <stack>
 
 // Orders games by id, so Game can be stored in std::set / std::map.
 bool Game::operator<(const Game& other) const
@@ -12,10 +10,24 @@ bool Game::operator<(const Game& other) const
     return id < other.id;
 }
 
-
 Game::Game(int gameid)
 {
     id = gameid;
+}
+
+void Game::printmask()
+{
+    unsigned __int128 tmp = mask;
+    std::stack<int> stk;
+    while (tmp > 0)
+    {
+        stk.push(tmp % 2);
+        tmp /= 2;
+    }
+    while(!stk.empty()){
+        std::cout << stk.top();
+        stk.pop();
+    }
 }
 
 // ---------- CSV parsing (from anthony_branch) ----------
@@ -59,8 +71,9 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
     std::string line;
     std::getline(file, line);          // skip the header row
 
-    while (std::getline(file, line))
+    for (int i = 0; i < n; i++)
     {
+        std::getline(file, line);
         // Strip the '\r' left by Windows line endings.
         if (!line.empty() && line.back() == '\r') line.pop_back();
 

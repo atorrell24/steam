@@ -7,8 +7,7 @@ random_device rd;   // non-deterministic generator
 mt19937 gen(rd());
 uniform_int_distribution<> dist(0, 127); // distribute results between 0 and 127 inclusive.
 
-
-int popcount128(__int128 x) {
+int popcount128(unsigned __int128 x) {
     //popcount works on 64bit ll at most, create custom 128bit popcount
     //return number of 1s in bit string
     ll low = x;
@@ -35,26 +34,43 @@ vector<string> generateTagList() {
 
 Graph::Graph()
 {
-    int n = 5; // number of games
-    int k = 2; // max connections per game
+    int n = 90; // number of games
+    int k = 8; // max connections per game
 
-    vector<Game> games(n); //initialize with parser
-    vector<string> ls = generateTagList(); //tag, index = vector index
-
+    vector<Game> games;
+    if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
+    {
+        return;
+    }
+    std::cout << "Loaded " << games.size() << " games\n";
+    vector<string> ls = generateTagList(); //index of tag = vector index
 
     //set tags+masks
     for (auto& i : games)
     {
-        for (int j = 0; j < 10; j++)
+        std::set<int> addedtags;
+        while (i.tags.size() < 10)
         {
             int rngtag = dist(gen);
-            i.tags.emplace_back(ls[rngtag]);
-            i.mask |= (__int128)1 << rngtag;
+            if (addedtags.count(rngtag) == 0)
+            {
+                i.tags.emplace_back(ls[rngtag]);
+                i.mask |= (unsigned __int128)1 << rngtag;
+                addedtags.insert(rngtag);
+            }
         }
     }
+
+    // for (auto& i : games)
+    // {
+    //     cout << i.title << " - ";
+    //     i.printmask();
+    //     cout << endl;
+    // }
+
     //construct adjacencies/weights
     for (int i = 0; i < n; ++i) {
-        // {number of different tags, id of the other game}
+        // {game, weight}
         vector<pair<Game, int>> weights;
 
         for (int j = 0; j < n; ++j) {
@@ -64,14 +80,33 @@ Graph::Graph()
             weights.emplace_back(games[j], difference);
         }
         //only interested in first k connections
-        partial_sort(weights.begin(), weights.begin() + k, weights.end());
-        vector<pair<Game, int>> tmp(weights.begin(), weights.begin() + k);
-        adj[std::move(games[i])].assign(weights.begin(), weights.begin() + k);
+        partial_sort(weights.begin(), weights.begin() + k, weights.end(), [](const auto& a, const auto& b)
+        {
+            return a.second < b.second;
+        });
+        std::move(weights.begin(), weights.begin() + k, std::back_inserter(adj[games[i]]));
     }
     v = adj.size();
     e = adj.size() * k;
 
-    //write to .txt here
+    //write to .csv
+    std::ofstream graphf("lib/graph/graph.csv");
+    if (!graphf.is_open())
+    {
+        std::cerr << "error writing to graph.csv";
+        return;
+    }
+    for (auto& i : adj)
+    {
+        graphf << i.first.id << endl;
+        const char* sep = "";
+        for (auto& j : i.second)
+        {
+            graphf << sep << j.first.id << "," << j.second;
+            sep = ",";
+        }
+        graphf << endl;
+    }
 }
 
 std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNode(int gameid)
@@ -94,10 +129,10 @@ void Graph::print()
 {
     for (auto& i : adj)
     {
-        cout << i.first.title << " - ";
+        cout << i.first.title << " (" << i.first.id << ") - ";
         for (auto& j : i.second)
         {
-            cout << j.first.id << " " << j.second << ", ";
+            cout << j.first.title << " " << j.second << ", ";
         }
         cout << endl;
     }
