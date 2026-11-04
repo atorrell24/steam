@@ -1,0 +1,16 @@
+{"status": "ready", "games": 6, "edges": 0}
+{"algos": ["bfs", "dijkstra"]}
+{"results": [{"id": 815170, "title": "Zombie World"}]}
+{"results": [{"id": 1654170, "title": "Agony VR"}, {"id": 2113450, "title": "Forests, Fields and Fortresses"}, {"id": 3292190, "title": "\ubc84\ud29c\ubc84 \ud30c\ub77c\ub178\uc774\uc544 - Vtuber Paranoia"}, {"id": 1946890, "title": "Codename: Warlock Playtest"}, {"id": 1025440, "title": "Fantasy General II"}]}
+{"results": [{"id": 3292190, "title": "\ubc84\ud29c\ubc84 \ud30c\ub77c\ub178\uc774\uc544 - Vtuber Paranoia"}]}
+{"results": [{"id": 3292190, "title": "\ubc84\ud29c\ubc84 \ud30c\ub77c\ub178\uc774\uc544 - Vtuber Paranoia"}]}
+{"results": []}
+{"error": "search needs text."}
+{"error": "path needs exactly 3 inputs."}
+{"error": "path needs exactly 3 inputs."}
+{"error": "algos must match bfs and dijkstra exactly."}
+{"error": "ID's must be numbers."}
+{"error": "unknown game id"}
+{"algo": "bfs", "found": true, "time_us": 412, "visited": 4, "path": [{"id": 1654170, "title": "Agony VR", "releaseDate": "Apr 5, 2023", "owners": "0 - 20000", "publishers": ["Ignibit", "Madmind Studio"], "tags": ["Horror", "Action", "VR"]}, {"id": 2113450, "title": "Forests, Fields and Fortresses", "releaseDate": "Apr 5, 2023", "owners": "0 - 20000", "publishers": ["9 Eyes Game Studio", "Stately Snail"], "tags": ["Strategy", "Casual", "Building"]}, {"id": 815170, "title": "Zombie World", "releaseDate": "Jun 1, 2018", "owners": "0 - 20000", "publishers": ["M.R.Studio"], "tags": ["Horror", "Action", "Survival"]}], "edges": [{"from": 1654170, "to": 2113450, "weight": 2}, {"from": 2113450, "to": 815170, "weight": 2}]}
+{"algo": "dijkstra", "found": true, "time_us": 1290, "visited": 6, "path": [{"id": 1654170, "title": "Agony VR", "releaseDate": "Apr 5, 2023", "owners": "0 - 20000", "publishers": ["Ignibit", "Madmind Studio"], "tags": ["Horror", "Action", "VR"]}, {"id": 2113450, "title": "Forests, Fields and Fortresses", "releaseDate": "Apr 5, 2023", "owners": "0 - 20000", "publishers": ["9 Eyes Game Studio", "Stately Snail"], "tags": ["Strategy", "Casual", "Building"]}, {"id": 815170, "title": "Zombie World", "releaseDate": "Jun 1, 2018", "owners": "0 - 20000", "publishers": ["M.R.Studio"], "tags": ["Horror", "Action", "Survival"]}], "edges": [{"from": 1654170, "to": 2113450, "weight": 2}, {"from": 2113450, "to": 815170, "weight": 2}]}
+{"error": "unknown command: hello"}
