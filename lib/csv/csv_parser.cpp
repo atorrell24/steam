@@ -15,6 +15,11 @@ Game::Game(int gameid)
     id = gameid;
 }
 
+Game::Game(std::string title)
+{
+    title = title;
+}
+
 void Game::printmask()
 {
     unsigned __int128 tmp = mask;

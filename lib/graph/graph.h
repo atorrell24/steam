@@ -10,8 +10,11 @@ class Graph
     map<Game,vector<pair<Game, int>>> adj; //adjacency list
 public:
     Graph();
-    std::map<Game, vector<pair<Game, int>>>::iterator findNode(int gameid);
+    std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromID(int gameid);
+    std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromTitle(string title);
     int V();
     int E();
+
     void print();
+
 };

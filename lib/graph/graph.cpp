@@ -110,11 +110,16 @@ Graph::Graph()
     }
 }
 
-std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNode(int gameid)
+std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromID(int gameid)
 {
     Game tmp(gameid);
     return adj.find(tmp);
 }
+
+std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromTitle(string title)
+{
+};
+
 
 int Graph::V()
 {
