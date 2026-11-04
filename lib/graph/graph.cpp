@@ -1,6 +1,8 @@
 #include "graph.h"
 #include "../csv/csv_parser.h"
 #include <bits/stdc++.h>
+
+#include <utility>
 using namespace std;
 using ll = long long;
 random_device rd;   // non-deterministic generator
@@ -32,30 +34,21 @@ vector<string> generateTagList() {
     return tags;
 }
 
-Graph::Graph()
+Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist))
 {
-    int n = 90; // number of games
-    int k = 8; // max connections per game
-
-    vector<Game> games;
-    if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
-    {
-        return;
-    }
-    std::cout << "Loaded " << games.size() << " games\n";
     vector<string> ls = generateTagList(); //index of tag = vector index
 
     //set tags+masks
     for (auto& i : games)
     {
         std::set<int> addedtags;
-        while (i.tags.size() < 10)
+        while (i.second.tags.size() < t)
         {
             int rngtag = dist(gen);
             if (addedtags.count(rngtag) == 0)
             {
-                i.tags.emplace_back(ls[rngtag]);
-                i.mask |= (unsigned __int128)1 << rngtag;
+                i.second.tags.emplace_back(ls[rngtag]);
+                i.second.mask |= (unsigned __int128)1 << rngtag;
                 addedtags.insert(rngtag);
             }
         }
@@ -69,22 +62,24 @@ Graph::Graph()
     // }
 
     //construct adjacencies/weights
-    for (int i = 0; i < n; ++i) {
+    for (auto& i : games)
+    {
         // {game, weight}
         vector<pair<Game, int>> weights;
 
-        for (int j = 0; j < n; ++j) {
-            if (j == i) continue;
+        for (auto& j : games)
+        {
+            if (j.first == i.first) continue;
             //xor only sets a bit if exactly 1 game has a tag
-            int difference = popcount128(games[i].mask ^ games[j].mask);
-            weights.emplace_back(games[j], difference);
+            int difference = popcount128(i.second.mask ^ j.second.mask);
+            weights.emplace_back(j.second, difference);
         }
         //only interested in first k connections
         partial_sort(weights.begin(), weights.begin() + k, weights.end(), [](const auto& a, const auto& b)
         {
             return a.second < b.second;
         });
-        std::move(weights.begin(), weights.begin() + k, std::back_inserter(adj[games[i]]));
+        std::move(weights.begin(), weights.begin() + k, std::back_inserter(adj[i.second]));
     }
     v = adj.size();
     e = adj.size() * k;
@@ -98,7 +93,7 @@ Graph::Graph()
     }
     for (auto& i : adj)
     {
-        graphf << i.first.id << endl;
+        graphf << i.first.id << ",";
         const char* sep = "";
         for (auto& j : i.second)
         {
@@ -109,11 +104,37 @@ Graph::Graph()
     }
 }
 
-std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNode(int gameid)
+Graph::Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf) : games(std::move(gamelist))
 {
-    Game tmp(gameid);
-    return adj.find(tmp);
+    string line;
+    while (getline(graphf, line))
+    {
+        stringstream ss(line);
+        string node;
+        getline(ss, node, ','); //source node
+        Game source = games[std::stoi(node)];
+        for (int i = 0; i < k; i++)
+        {
+            getline(ss, node, ',');
+            string weight;
+            getline(ss, weight, ',');
+            pair<Game, int> connection = {games[std::stoi(node)], std::stoi(weight)};
+            adj[source].emplace_back(connection);
+        }
+    }
 }
+
+std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromID(int gameid)
+{
+    return adj.find(games[gameid]);
+}
+
+std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromTitle(string& title)
+{
+    Game tmp(title);
+    return adj.find(tmp);
+};
+
 
 int Graph::V()
 {
