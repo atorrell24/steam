@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/Users/antor/DSA/P2/steam/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/steam.dir/includes_CXX.rsp -g -std=gnu++14 -o CMakeFiles\\steam.dir\\src\\main.cpp.obj -c C:\\Users\\antor\\DSA\\P2\\steam\\src\\main.cpp",
+  "file": "C:/Users/antor/DSA/P2/steam/src/main.cpp",
+  "output": "CMakeFiles/steam.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/antor/DSA/P2/steam/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/steam.dir/includes_CXX.rsp -g -std=gnu++14 -o CMakeFiles\\steam.dir\\lib\\graph\\graph.cpp.obj -c C:\\Users\\antor\\DSA\\P2\\steam\\lib\\graph\\graph.cpp",
+  "file": "C:/Users/antor/DSA/P2/steam/lib/graph/graph.cpp",
+  "output": "CMakeFiles/steam.dir/lib/graph/graph.cpp.obj"
+},
+{
+  "directory": "C:/Users/antor/DSA/P2/steam/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/steam.dir/includes_CXX.rsp -g -std=gnu++14 -o CMakeFiles\\steam.dir\\lib\\csv\\csv_parser.cpp.obj -c C:\\Users\\antor\\DSA\\P2\\steam\\lib\\csv\\csv_parser.cpp",
+  "file": "C:/Users/antor/DSA/P2/steam/lib/csv/csv_parser.cpp",
+  "output": "CMakeFiles/steam.dir/lib/csv/csv_parser.cpp.obj"
+}
+]

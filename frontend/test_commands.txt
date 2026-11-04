@@ -1,0 +1,19 @@
+algos
+search zombie
+search a
+search VTUBER
+search 파라
+search ZZZ
+search
+path
+path bfs 1654170
+path xyz 1654170 815170
+path bfs abc 815170
+path bfs 1 815170
+path bfs 1654170 815170
+path dijkstra 1654170 815170
+path bfs 1654170 1654170
+hello
+
+quit
+search zombie
