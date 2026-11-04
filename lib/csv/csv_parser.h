@@ -14,9 +14,9 @@ struct Game
     std::vector<std::string> publishers;
     std::vector<std::string> tags;
     Game() = default;
-    Game(int gameid);
+    Game(std::string gametitle);
     bool operator<(const Game& other) const;
     void printmask();
 };
 
-bool loadGames(const std::string& path, std::unordered_map<int, Game>& games);
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, int n);
