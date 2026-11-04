@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 struct Game
 {
@@ -19,4 +20,4 @@ struct Game
 
 };
 
-bool loadGames(const std::string& path, std::vector<Game>& games);
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games);

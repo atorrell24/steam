@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 #include "../lib/csv/csv_parser.h"   // Game, loadGames
 #include "../lib/graph/graph.h"      // Graph
@@ -15,14 +16,15 @@ int main() {
     if (!graphf)
     {
         // No saved graph yet: build it from the CSV.
-        std::vector<Game> games;
+        std::unordered_map<int, Game> games;
         if (!loadGames("lib/csv/sample.csv", games)) {
             return 1;   
         }
         std::cout << "Loaded " << games.size() << " games\n";
 
         // TEMPORARY: confirms the parser still works after the merge. Remove once the graph is connected.
-        for (const Game& g : games) {
+        for (const auto& entry : games) {
+            const Game& g = entry.second;
             std::cout << g.id << " | " << g.title
                       << " | publishers: " << g.publishers.size() << '\n';
         }
