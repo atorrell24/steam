@@ -15,11 +15,6 @@ Game::Game(int gameid)
     id = gameid;
 }
 
-Game::Game(std::string title)
-{
-    title = title;
-}
-
 void Game::printmask()
 {
     unsigned __int128 tmp = mask;
@@ -64,7 +59,7 @@ bool readField(std::stringstream& ss, std::string& field)
 }
 
 
-bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, int n)
 {
     std::ifstream file(path);
     if (!file.is_open())
@@ -103,8 +98,6 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
         {
             g.publishers.push_back(piece);
         }
-
-        
 
         games.emplace(g.id, g);
     }
