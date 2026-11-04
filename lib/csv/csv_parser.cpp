@@ -58,7 +58,8 @@ bool readField(std::stringstream& ss, std::string& field)
     return true;
 }
 
-bool loadGames(const std::string& path, std::vector<Game>& games, int n)
+
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games)
 {
     std::ifstream file(path);
     if (!file.is_open())
@@ -98,7 +99,9 @@ bool loadGames(const std::string& path, std::vector<Game>& games, int n)
             g.publishers.push_back(piece);
         }
 
-        games.push_back(g);
+        
+
+        games.emplace(g.id, g);
     }
     return true;
 }
