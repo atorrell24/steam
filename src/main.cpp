@@ -18,7 +18,7 @@ int main() {
     }
     std::cout << "Loaded " << games.size() << " games\n";
     std::ifstream graphf("lib/graph/graph.csv");
-    if (!graphf) //change to !graphf for final
+    if (graphf) //change to !graphf for final
     {
         // No saved graph yet: build it from the CSV.
         Graph steamGraph(games);

@@ -42,7 +42,7 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist
     for (auto& i : games)
     {
         std::set<int> addedtags;
-        while (i.second.tags.size() < t)
+        while (i.second.tags.size() < t) //ensures 10 unique tags
         {
             int rngtag = dist(gen);
             if (addedtags.count(rngtag) == 0)
@@ -74,7 +74,7 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist
             int difference = popcount128(i.second.mask ^ j.second.mask);
             weights.emplace_back(j.second, difference);
         }
-        //only interested in first k connections
+        //only interested in first k connections, sort by weight
         partial_sort(weights.begin(), weights.begin() + k, weights.end(), [](const auto& a, const auto& b)
         {
             return a.second < b.second;
