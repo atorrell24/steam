@@ -98,7 +98,7 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
         {
             g.publishers.push_back(piece);
         }
-
+        g.v_index = i;
         games.emplace(g.id, g);
     }
     return true;

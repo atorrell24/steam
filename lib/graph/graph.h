@@ -10,14 +10,17 @@ class Graph
     int k = 8; // max connections per game
     int t = 10; // max tags per game
 
-    map<Game,vector<pair<Game, int>>> adj; //adjacency list
-    std::unordered_map<int, Game> games; //loaded games from csv
-public:
-    Graph(std::unordered_map<int, Game>& gamelist);
-    Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf);
-    std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromID(int gameid);
-    std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromTitle(string& title);
+    map<Game,vector<pair<const Game*, int>>> adj; //adjacency list
+    unordered_map<int, Game> games; //loaded games from csv
 
+public:
+    vector<const Game*> index_table;
+    Graph();
+    Graph(unordered_map<int, Game>& gamelist);
+    Graph(unordered_map<int, Game>& gamelist, ifstream& graphf);
+    map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromID(int gameid);
+    map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromTitle(string& title);
+    vector<int> dijkstra(string from, string to);
     int V();
     int E();
 

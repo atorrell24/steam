@@ -13,10 +13,11 @@ struct Game
     std::string owners;
     std::vector<std::string> publishers;
     std::vector<std::string> tags;
+    int v_index;
     Game() = default;
     Game(std::string gametitle);
     bool operator<(const Game& other) const;
     void printmask();
 };
 
-bool loadGames(const std::string& path, std::unordered_map<int, Game>& games), int n;
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, int n);

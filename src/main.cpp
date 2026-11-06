@@ -8,7 +8,7 @@
 #include "../lib/graph/graph.h"      // Graph
 
 int main() {
-    int n = 90; // number of games
+    int n = 125855; // number of games. 125855
     std::cout << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA\n";
     std::unordered_map<int, Game> games;
     if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
@@ -18,16 +18,14 @@ int main() {
     }
     std::cout << "Loaded " << games.size() << " games\n";
     std::ifstream graphf("lib/graph/graph.csv");
-    if (graphf) //change to !graphf for final
-    {
-        // No saved graph yet: build it from the CSV.
-        Graph steamGraph(games);
-        steamGraph.print();
-    }
-    else
-    {
-        Graph steamGraph(games, graphf);
-        steamGraph.print();
-    }
+
+    Graph steamGraph ((!graphf) ? Graph(games) : Graph(games, graphf)); //if no graph.csv, build from db, else, build from graph.csv
+    steamGraph.print();
+    // auto cost = steamGraph.dijkstra("ARCHiTECTUS", "Aeroplanoui");
+    // for (auto& i : cost)
+    // {
+    //     cout << i << endl;
+    // }
     return 0;
+    //ENOH, POLAR, ARCHiTECTUS, Aeroplanoui
 }
