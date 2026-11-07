@@ -10,7 +10,7 @@
 #include "../lib/protocol/protocol.h" //Frontend , command loop
 
 int main() {
-    int n = 90; // number of games
+    int n = 125855; // number of games. 125855
     std::cerr << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA\n";
     std::unordered_map<int, Game> games;
     if (!loadGames("lib/csv/steamgames.csv", games, n)) //populates Game vector
@@ -21,18 +21,18 @@ int main() {
     std::cerr << "Loaded " << games.size() << " games\n";
     
     std::ifstream graphf("lib/graph/graph.csv");
-    if (!graphf) //change to !graphf for final
-    {
-        // No saved graph yet: build it from the CSV.
-        Graph steamGraph(games);
-        runCommandLoop(steamGraph);
-       
-    }
-    else
-    {
-        Graph steamGraph(games, graphf);
-        runCommandLoop(steamGraph);
-        
-    }
+
+    Graph steamGraph ((!graphf) ? Graph(games) : Graph(games, graphf)); //if no graph.csv, build from db, else, build from graph.csv
+    //testing stuff
+    // auto result1 = steamGraph.bfs("Aeroplanoui", "INFRA");
+    // auto result2 = steamGraph.dijkstra("Aeroplanoui", "INFRA");
+    // for (auto& i : result1)
+    //     cout << i->title << " " << endl;
+    // cout << endl << endl;
+    // for (auto& i : result2)
+    //     cout << i->title << " " << endl;
+    runCommandLoop(steamGraph);   
+
     return 0;
+
 }

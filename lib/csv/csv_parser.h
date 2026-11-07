@@ -13,6 +13,7 @@ struct Game
     std::string owners;
     std::vector<std::string> publishers;
     std::vector<std::string> tags;
+    int v_index;
     Game() = default;
     Game(std::string gametitle);
     bool operator<(const Game& other) const;

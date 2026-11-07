@@ -34,15 +34,19 @@ vector<string> generateTagList() {
     return tags;
 }
 
-Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist))
+Graph::Graph(){}
+
+Graph::Graph(unordered_map<int, Game>& gamelist) : games(move(gamelist))
 {
     vector<string> ls = generateTagList(); //index of tag = vector index
-
+    v = games.size();
+    e = games.size() * k;
+    index_table.resize(v);
     //set tags+masks
     for (auto& i : games)
     {
-        std::set<int> addedtags;
-        while (i.second.tags.size() < t)
+        set<int> addedtags;
+        while (i.second.tags.size() < t) //ensures 10 unique tags
         {
             int rngtag = dist(gen);
             if (addedtags.count(rngtag) == 0)
@@ -54,41 +58,34 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist
         }
     }
 
-    // for (auto& i : games)
-    // {
-    //     cout << i.title << " - ";
-    //     i.printmask();
-    //     cout << endl;
-    // }
-
+    // {game ptr, weight}
+    vector<pair<const Game*, int>> weights;
+    weights.reserve(v);
     //construct adjacencies/weights
     for (auto& i : games)
     {
-        // {game, weight}
-        vector<pair<Game, int>> weights;
-
         for (auto& j : games)
         {
             if (j.first == i.first) continue;
             //xor only sets a bit if exactly 1 game has a tag
             int difference = popcount128(i.second.mask ^ j.second.mask);
-            weights.emplace_back(j.second, difference);
+            weights.emplace_back(&j.second, difference);
         }
-        //only interested in first k connections
+        //only interested in first k connections, sort by weight
         partial_sort(weights.begin(), weights.begin() + k, weights.end(), [](const auto& a, const auto& b)
         {
             return a.second < b.second;
         });
-        std::move(weights.begin(), weights.begin() + k, std::back_inserter(adj[i.second]));
+        move(weights.begin(), weights.begin() + k, back_inserter(adj[i.second]));
+        index_table[i.second.v_index] = &adj.find(i.second)->first; //index_table associates games with indices
+        weights.clear();
     }
-    v = adj.size();
-    e = adj.size() * k;
 
     //write to .csv
-    std::ofstream graphf("lib/graph/graph.csv");
+    ofstream graphf("lib/graph/graph.csv");
     if (!graphf.is_open())
     {
-        std::cerr << "error writing to graph.csv";
+        cerr << "error writing to graph.csv";
         return;
     }
     for (auto& i : adj)
@@ -97,7 +94,7 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist
         const char* sep = "";
         for (auto& j : i.second)
         {
-            graphf << sep << j.first.id << "," << j.second;
+            graphf << sep << j.first->id << "," << j.second;
             sep = ",";
         }
         graphf << endl;
@@ -109,7 +106,7 @@ const std::unordered_map<int, Game>& Graph::getGames() const
     return games;
 }
 
-const std::vector<std::pair<Game, int>>* Graph::getNeighbors(int gameid) const
+const std::vector<std::pair<const Game*, int>>* Graph::getNeighbors(int gameid) const
 {
     auto g = games.find(gameid);              
     if (g == games.end()) return nullptr;     
@@ -118,23 +115,29 @@ const std::vector<std::pair<Game, int>>* Graph::getNeighbors(int gameid) const
     return &node->second;
 }
 
-Graph::Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf) : games(std::move(gamelist))
+
+
+Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(gamelist))
 {
+    v = games.size();
+    e = games.size() * k;
+    index_table.resize(v);
     string line;
     while (getline(graphf, line))
     {
         stringstream ss(line);
         string node;
         getline(ss, node, ','); //source node
-        Game source = games[std::stoi(node)];
+        Game source = games[stoi(node)];
         for (int i = 0; i < k; i++)
         {
             getline(ss, node, ',');
             string weight;
             getline(ss, weight, ',');
-            pair<Game, int> connection = {games[std::stoi(node)], std::stoi(weight)};
+            pair<Game*, int> connection = {&games[stoi(node)], stoi(weight)};
             adj[source].emplace_back(connection);
         }
+        index_table[source.v_index] = &adj.find(source)->first; //index_table associates games with indices
     }
     v = adj.size();
     e = 0;
@@ -142,17 +145,115 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf) : g
         e += node.second.size();
 }
 
-std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromID(int gameid)
+map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromID(int gameid)
 {
     return adj.find(games[gameid]);
 }
 
-std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromTitle(string& title)
+map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromTitle(string& title)
 {
     Game tmp(title);
     return adj.find(tmp);
 };
 
+vector<const Game*> Graph::dijkstra(string from, string to)
+{
+    auto fromit = findNodeFromTitle(from); //iterator pointing to source node
+    auto toit = findNodeFromTitle(to); //iterator pointing to target node
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq; //each entry is <distance, gameID>
+    set<int> visited; //stores visited gameIDs. distances here are locked.
+    vector<int> costs(v, INT_MAX); //cheapest known cost from source to every node
+    vector<int> preds(v, -1); //stores predecessor in shortest path
+    vector<const Game*> res; //output
+
+    costs[fromit->first.v_index] = 0;
+    pq.emplace(0, fromit->first.id);
+
+    for (int i = 0; i < v; i++) //handles potentially disconnected graph
+    {
+        while (!pq.empty())
+        {
+            auto currentit = findNodeFromID(pq.top().second); //iterator to current node.
+            int du = pq.top().first; //minimum cost to reach u
+            pq.pop();
+            if (visited.count(currentit->first.id) != 0)
+            {
+                continue;
+            }
+            for (auto& i : currentit->second)
+            {
+                int idx = i.first->v_index; //index of game connected by edge
+                int weight = i.second; //cost to reach game
+                if (costs[idx] > du + weight)
+                {
+                    costs[idx] = du + weight;
+                    pq.emplace(costs[idx], i.first->id);
+                    preds[idx] = currentit->first.v_index;
+                }
+            }
+            visited.insert(currentit->first.id); //distance is now locked
+        }
+    }
+    if (costs[toit->first.v_index] == INT_MAX)
+    {
+        return {};
+    }
+    int l = toit->first.v_index;
+    res.emplace_back(index_table[toit->first.v_index]);
+    while (l != fromit->first.v_index)
+    {
+        res.emplace_back(index_table[preds[l]]);
+        l = preds[l];
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+vector<const Game*> Graph::bfs(string from, string to)
+{
+    set<int> visited; //stores visited gamids
+    vector<int> preds(v, -1); //stores indices of predecessors in bfs
+    vector<const Game*> res; //bfs path
+    auto fromit = findNodeFromTitle(from);
+    auto toit = findNodeFromTitle(to);
+
+    queue<int> q; //stores gameids
+    visited.insert(fromit->first.id);
+    q.push(fromit->first.id);
+
+    while (!q.empty())
+    {
+        auto u = findNodeFromID(q.front()); //iterator to current node
+        q.pop();
+        for (auto& i : u->second)
+        {
+            if (visited.count(i.first->id) == 0)
+            {
+                visited.insert(i.first->id);
+                q.push(i.first->id);
+                preds[i.first->v_index] = u->first.v_index;
+            }
+            if (visited.count(toit->first.id) != 0)
+            {
+                break;
+            }
+        }
+    }
+    if (preds[toit->first.v_index] == -1)
+    {
+        return {};
+    }
+    int l = toit->first.v_index;
+    res.emplace_back(index_table[toit->first.v_index]);
+    while (l != fromit->first.v_index)
+    {
+        res.emplace_back(index_table[preds[l]]);
+        l = preds[l];
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
 
 int Graph::V()
 {
@@ -171,7 +272,7 @@ void Graph::print()
         cout << i.first.title << " (" << i.first.id << ") - ";
         for (auto& j : i.second)
         {
-            cout << j.first.title << " " << j.second << ", ";
+            cout << j.first->title << " " << j.second << ", ";
         }
         cout << endl;
     }
