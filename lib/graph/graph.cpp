@@ -58,7 +58,6 @@ Graph::Graph(unordered_map<int, Game>& gamelist) : games(move(gamelist))
         }
     }
 
-
     // {game ptr, weight}
     vector<pair<const Game*, int>> weights;
     weights.reserve(v);
@@ -137,7 +136,7 @@ map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromTitle(str
     return adj.find(tmp);
 };
 
-vector<int> Graph::dijkstra(string from, string to)
+vector<const Game*> Graph::dijkstra(string from, string to)
 {
     auto fromit = findNodeFromTitle(from); //iterator pointing to source node
     auto toit = findNodeFromTitle(to); //iterator pointing to target node
@@ -145,13 +144,15 @@ vector<int> Graph::dijkstra(string from, string to)
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq; //each entry is <distance, gameID>
     set<int> visited; //stores visited gameIDs. distances here are locked.
     vector<int> costs(v, INT_MAX); //cheapest known cost from source to every node
+    vector<int> preds(v, -1); //stores predecessor in shortest path
+    vector<const Game*> res; //output
 
     costs[fromit->first.v_index] = 0;
     pq.emplace(0, fromit->first.id);
 
     for (int i = 0; i < v; i++) //handles potentially disconnected graph
     {
-        while (pq.top().second != toit->first.id)
+        while (!pq.empty())
         {
             auto currentit = findNodeFromID(pq.top().second); //iterator to current node.
             int du = pq.top().first; //minimum cost to reach u
@@ -168,14 +169,71 @@ vector<int> Graph::dijkstra(string from, string to)
                 {
                     costs[idx] = du + weight;
                     pq.emplace(costs[idx], i.first->id);
+                    preds[idx] = currentit->first.v_index;
                 }
             }
             visited.insert(currentit->first.id); //distance is now locked
         }
     }
-    return costs;
+    if (costs[toit->first.v_index] == INT_MAX)
+    {
+        return {};
+    }
+    int l = toit->first.v_index;
+    res.emplace_back(index_table[toit->first.v_index]);
+    while (l != fromit->first.v_index)
+    {
+        res.emplace_back(index_table[preds[l]]);
+        l = preds[l];
+    }
+    reverse(res.begin(), res.end());
+    return res;
 }
 
+vector<const Game*> Graph::bfs(string from, string to)
+{
+    set<int> visited; //stores visited gamids
+    vector<int> preds(v, -1); //stores indices of predecessors in bfs
+    vector<const Game*> res; //bfs path
+    auto fromit = findNodeFromTitle(from);
+    auto toit = findNodeFromTitle(to);
+
+    queue<int> q; //stores gameids
+    visited.insert(fromit->first.id);
+    q.push(fromit->first.id);
+
+    while (!q.empty())
+    {
+        auto u = findNodeFromID(q.front()); //iterator to current node
+        q.pop();
+        for (auto& i : u->second)
+        {
+            if (visited.count(i.first->id) == 0)
+            {
+                visited.insert(i.first->id);
+                q.push(i.first->id);
+                preds[i.first->v_index] = u->first.v_index;
+            }
+            if (visited.count(toit->first.id) != 0)
+            {
+                break;
+            }
+        }
+    }
+    if (preds[toit->first.v_index] == -1)
+    {
+        return {};
+    }
+    int l = toit->first.v_index;
+    res.emplace_back(index_table[toit->first.v_index]);
+    while (l != fromit->first.v_index)
+    {
+        res.emplace_back(index_table[preds[l]]);
+        l = preds[l];
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
 
 int Graph::V()
 {
