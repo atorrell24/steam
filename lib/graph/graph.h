@@ -15,13 +15,12 @@ class Graph
     vector<const Game*> index_table;
 public:
 
-    Graph();
     Graph(unordered_map<int, Game>& gamelist);
     Graph(unordered_map<int, Game>& gamelist, ifstream& graphf);
     map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromID(int gameid);
     map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromTitle(string& title);
-    vector<const Game*> dijkstra(string from, string to);
-    vector<const Game*> bfs(string from, string to);
+    vector<const Game*> dijkstra(int from, int to);
+    vector<const Game*> bfs(int from, int to);
 
     int V();
     int E();

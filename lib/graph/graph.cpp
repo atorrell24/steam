@@ -2,7 +2,6 @@
 #include "../csv/csv_parser.h"
 #include <bits/stdc++.h>
 
-#include <utility>
 using namespace std;
 using ll = long long;
 random_device rd;   // non-deterministic generator
@@ -34,14 +33,12 @@ vector<string> generateTagList() {
     return tags;
 }
 
-Graph::Graph(){}
-
 Graph::Graph(unordered_map<int, Game>& gamelist) : games(move(gamelist))
 {
     vector<string> ls = generateTagList(); //index of tag = vector index
     v = games.size();
     e = games.size() * k;
-    index_table.resize(v);
+    index_table.reserve(v);
     //set tags+masks
     for (auto& i : games)
     {
@@ -105,7 +102,7 @@ Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(
 {
     v = games.size();
     e = games.size() * k;
-    index_table.resize(v);
+    index_table.reserve(v);
     string line;
     while (getline(graphf, line))
     {
@@ -136,10 +133,10 @@ map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromTitle(str
     return adj.find(tmp);
 };
 
-vector<const Game*> Graph::dijkstra(string from, string to)
+vector<const Game*> Graph::dijkstra(int from, int to)
 {
-    auto fromit = findNodeFromTitle(from); //iterator pointing to source node
-    auto toit = findNodeFromTitle(to); //iterator pointing to target node
+    auto fromit = findNodeFromID(from); //iterator pointing to source node
+    auto toit = findNodeFromID(to); //iterator pointing to target node
 
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq; //each entry is <distance, gameID>
     set<int> visited; //stores visited gameIDs. distances here are locked.
@@ -190,13 +187,13 @@ vector<const Game*> Graph::dijkstra(string from, string to)
     return res;
 }
 
-vector<const Game*> Graph::bfs(string from, string to)
+vector<const Game*> Graph::bfs(int from, int to)
 {
     set<int> visited; //stores visited gamids
     vector<int> preds(v, -1); //stores indices of predecessors in bfs
     vector<const Game*> res; //bfs path
-    auto fromit = findNodeFromTitle(from);
-    auto toit = findNodeFromTitle(to);
+    auto fromit = findNodeFromID(from);
+    auto toit = findNodeFromID(to);
 
     queue<int> q; //stores gameids
     visited.insert(fromit->first.id);

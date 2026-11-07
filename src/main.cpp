@@ -20,14 +20,14 @@ int main() {
     std::ifstream graphf("lib/graph/graph.csv");
 
     Graph steamGraph ((!graphf) ? Graph(games) : Graph(games, graphf)); //if no graph.csv, build from db, else, build from graph.csv
-    //testing stuff
-    // auto result1 = steamGraph.bfs("Aeroplanoui", "INFRA");
-    // auto result2 = steamGraph.dijkstra("Aeroplanoui", "INFRA");
-    // for (auto& i : result1)
-    //     cout << i->title << " " << endl;
-    // cout << endl << endl;
-    // for (auto& i : result2)
-    //     cout << i->title << " " << endl;
+    // testing stuff
+     // auto result1 = steamGraph.bfs("Aeroplanoui", "INFRA");
+     // auto result2 = steamGraph.dijkstra("Aeroplanoui", "INFRA");
+     // for (auto& i : result1)
+     //     cout << i->title << " " << endl;
+     // cout << endl << endl;
+     // for (auto& i : result2)
+     //     cout << i->title << " " << endl;
 
     return 0;
 
