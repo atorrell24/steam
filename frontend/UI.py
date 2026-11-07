@@ -23,9 +23,11 @@ def load_data_a(returned_data):
             df = pd.read_json(line.rstrip('\n'))
             return df
 
-here = Path(__file__).parent
-b = Backend([sys.executable, "-X", "utf8", str(here / "fake_backend.py")],
-            log_path=str(here / "backend_log.txt"))
+here = Path(__file__).resolve().parent   # the folder this file is in
+steam_dir = here.parent
+b = Backend([str(steam_dir / "steam_backend.exe")],
+            log_path=str(here / "backend_log.txt"),
+            cwd=str(steam_dir))
 
 game1 = {}
 game2 = {}
