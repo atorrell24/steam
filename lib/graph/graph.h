@@ -8,7 +8,7 @@ class Graph
     int v = 0; // |V|
     int e = 0; // |E|
     int k = 8; // max connections per game
-    int t = 10; // max tags per game
+    size_t t = 10; // max tags per game
 
     map<Game,vector<pair<const Game*, int>>> adj; //adjacency list
     unordered_map<int, Game> games; //loaded games from csv
@@ -23,9 +23,10 @@ public:
     
     
     map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromID(int gameid);
-    map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromTitle(string& title);
-    vector<const Game*> dijkstra(int from, int to);
-    vector<const Game*> bfs(int from, int to);
+    
+    
+    vector<const Game*> dijkstra(int from, int to, size_t& visitedCount);
+    vector<const Game*> bfs(int from, int to, size_t& visitedCount);
 
     int V();
     int E();

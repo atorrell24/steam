@@ -38,7 +38,7 @@ Graph::Graph(unordered_map<int, Game>& gamelist) : games(move(gamelist))
     vector<string> ls = generateTagList(); //index of tag = vector index
     v = games.size();
     e = games.size() * k;
-    index_table.reserve(v);
+    index_table.resize(v);
     //set tags+masks
     for (auto& i : games)
     {
@@ -118,7 +118,7 @@ Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(
 {
     v = games.size();
     e = games.size() * k;
-    index_table.reserve(v);
+    index_table.resize(v);
     string line;
     while (getline(graphf, line))
     {
@@ -147,13 +147,9 @@ map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromID(int ga
     return adj.find(games[gameid]);
 }
 
-map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromTitle(string& title)
-{
-    Game tmp(title);
-    return adj.find(tmp);
-};
 
-vector<const Game*> Graph::dijkstra(int from, int to)
+
+vector<const Game*> Graph::dijkstra(int from, int to, size_t& visitedCount)
 {
     auto fromit = findNodeFromID(from); //iterator pointing to source node
     auto toit = findNodeFromID(to); //iterator pointing to target node
@@ -165,88 +161,87 @@ vector<const Game*> Graph::dijkstra(int from, int to)
     vector<const Game*> res; //output
 
     costs[fromit->first.v_index] = 0;
-    pq.emplace(0, fromit->first.id);
+    pq.emplace(0, from  );
 
-    for (int i = 0; i < v; i++) //handles potentially disconnected graph
+    while (!pq.empty())
     {
-        while (!pq.empty())
+        auto [du, uid] = pq.top();        // cheapest unfinished node
+        pq.pop();
+        if (visited.count(uid) != 0) continue;   // stale queue entry: already finalized
+        visited.insert(uid);              // its distance is now final
+        if (uid == to) break;             // target finalized: stop
+
+        auto currentit = findNodeFromID(uid);
+        for (auto& edge : currentit->second)
         {
-            auto currentit = findNodeFromID(pq.top().second); //iterator to current node.
-            int du = pq.top().first; //minimum cost to reach u
-            pq.pop();
-            if (visited.count(currentit->first.id) != 0)
+            int idx = edge.first->v_index;
+            int weight = edge.second;
+            if (costs[idx] > du + weight)  // cheaper way to reach this neighbor
             {
-                continue;
+                costs[idx] = du + weight;
+                preds[idx] = currentit->first.v_index;
+                pq.emplace(costs[idx], edge.first->id);
             }
-            for (auto& i : currentit->second)
-            {
-                int idx = i.first->v_index; //index of game connected by edge
-                int weight = i.second; //cost to reach game
-                if (costs[idx] > du + weight)
-                {
-                    costs[idx] = du + weight;
-                    pq.emplace(costs[idx], i.first->id);
-                    preds[idx] = currentit->first.v_index;
-                }
-            }
-            visited.insert(currentit->first.id); //distance is now locked
         }
     }
-    if (costs[toit->first.v_index] == INT_MAX)
-    {
-        return {};
-    }
+    visitedCount = visited.size();
+
+    if (costs[toit->first.v_index] == INT_MAX) return {};   // unreachable
+
+    // Walk predecessors back from the target, then reverse to get start-to-end.
     int l = toit->first.v_index;
-    res.emplace_back(index_table[toit->first.v_index]);
+    res.emplace_back(index_table[l]);
     while (l != fromit->first.v_index)
     {
-        res.emplace_back(index_table[preds[l]]);
         l = preds[l];
+        res.emplace_back(index_table[l]);
     }
     reverse(res.begin(), res.end());
     return res;
+
 }
 
-vector<const Game*> Graph::bfs(int from, int to)
+vector<const Game*> Graph::bfs(int from, int to, size_t& visitedCount)
 {
-    set<int> visited; //stores visited gamids
-    vector<int> preds(v, -1); //stores indices of predecessors in bfs
-    vector<const Game*> res; //bfs path
+    
     auto fromit = findNodeFromID(from);
     auto toit = findNodeFromID(to);
 
-    queue<int> q; //stores gameids
-    visited.insert(fromit->first.id);
-    q.push(fromit->first.id);
+    set<int> visited;                     // gameIDs already discovered
+    vector<int> preds(v, -1);             // predecessor in the BFS tree, by v_index
+    vector<const Game*> res;
+    queue<int> q;                         // gameIDs waiting to be expanded
 
-    while (!q.empty())
+    visited.insert(from);
+    q.push(from);
+    bool found = (from == to);            // same game: the path is just [from]
+
+    while (!q.empty() && !found)          // stops the whole search once the target is found
     {
-        auto u = findNodeFromID(q.front()); //iterator to current node
+        auto u = findNodeFromID(q.front());
         q.pop();
-        for (auto& i : u->second)
+        for (auto& edge : u->second)
         {
-            if (visited.count(i.first->id) == 0)
+            int nid = edge.first->id;
+            if (visited.count(nid) == 0)
             {
-                visited.insert(i.first->id);
-                q.push(i.first->id);
-                preds[i.first->v_index] = u->first.v_index;
-            }
-            if (visited.count(toit->first.id) != 0)
-            {
-                break;
+                visited.insert(nid);
+                preds[edge.first->v_index] = u->first.v_index;
+                q.push(nid);
+                if (nid == to) { found = true; break; }   // first discovery = fewest edges
             }
         }
     }
-    if (preds[toit->first.v_index] == -1)
-    {
-        return {};
-    }
+    visitedCount = visited.size();
+
+    if (!found) return {};                // unreachable
+
     int l = toit->first.v_index;
-    res.emplace_back(index_table[toit->first.v_index]);
+    res.emplace_back(index_table[l]);
     while (l != fromit->first.v_index)
     {
-        res.emplace_back(index_table[preds[l]]);
         l = preds[l];
+        res.emplace_back(index_table[l]);
     }
     reverse(res.begin(), res.end());
     return res;
