@@ -7,19 +7,6 @@ from streamlit_agraph import agraph, Node, Edge, Config
 # import pandas as pd
 # from time import time
 
-# @st.cache_data
-# def load_data_a(returned_graph):
-#     df = pd.read_json(returned_graph)
-#     return df
-#
-# df = load_data_a("test.output.txt") #NEEDS FILE TO READ
-#
-# #converts .json into a dictionary
-#     #we could do a csv -> json as well
-# #preferable order = AppID, Name, Edge(next in order or if the adjacent nodes all point to game #1/#2,
-#                     #Release Date,Estimated owners,Publishers,Genres
-# dict_convert = json.loads(df)
-
 @st.cache_data
 def make_graph(node_dict, edge_dict, game1, game2):
     nodes = []
