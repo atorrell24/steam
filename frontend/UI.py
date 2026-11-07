@@ -11,13 +11,7 @@ from frontend_graph_make import make_graph, graph_config
 from backend_client import Backend, BackendError, BackendDiedError
 
 #---To-Do List :)
-#general
-# DONE  import backend.py & frontend_graph_make + figure out local paths
-#       figure out how to receive & send requests between backend
-#specific
 #       spark warning if game1 or game2 not found
-#       get json file from backend and add to frontend_graph_make
-
 
 #------To Run in local terminal: streamlit run frontend/UI.py
 
