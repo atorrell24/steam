@@ -117,7 +117,7 @@ if __name__ == "__main__":
     b = Backend([sys.executable, "-X", "utf8", str(here / "fake_backend.py")],
                 log_path=str(here / "backend_log.txt"))
  
-    print("ready:", b.games, "games,", b.edges, "edges")
+    print("\nready:", b.games, "games,", b.edges, "edges")
     print("algos:", b.algos())
     print("search 'zombie':", b.search("zombie"))
     print("search 'VTUBER':", b.search("VTUBER"))
