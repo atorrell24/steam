@@ -7,7 +7,7 @@
 // Orders games by id, so Game can be stored in std::set / std::map.
 bool Game::operator<(const Game& other) const
 {
-    return title < other.title;
+    return id < other.id;
 }
 
 Game::Game(std::string gametitle)
@@ -73,6 +73,10 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
 
     for (int i = 0; i < n; i++)
     {
+        if (!std::getline(file, line))   
+            break;
+        
+        
         std::getline(file, line);
         // Strip the '\r' left by Windows line endings.
         if (!line.empty() && line.back() == '\r') line.pop_back();
