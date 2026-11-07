@@ -1,6 +1,2 @@
-Traceback (most recent call last):
-  File "C:\Users\abiga\CLionProjects\steam\frontend\fake_backend.py", line 70, in <module>
-    for line in sys.stdin:
-                ^^^^^^^^^
-  File "<frozen codecs>", line 322, in decode
-KeyboardInterrupt
+SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA
+Loaded 500 games

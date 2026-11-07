@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <chrono> 
 #include <stdexcept>
 
 #include "../third_party/nlohmann/json.hpp"
@@ -47,6 +48,13 @@ std::string toLower(const std::string& str)
         }
     }
     return copy_str;
+}
+json gameToJson(const Game& g)
+{
+    return json{
+        {"id", g.id}, {"title", g.title}, {"releaseDate", g.releaseDate},
+        {"owners", g.owners}, {"publishers", g.publishers}, {"tags", g.tags},
+    };
 }
 }
 
@@ -120,7 +128,7 @@ void runCommandLoop(Graph& graph)
         {
             std::istringstream argStream(rest);
             std::string algo, fromText, toText, place_holder;
-            argStream >> algo >> fromText >> toText;
+            
 
             if (!(argStream >> algo >> fromText >> toText))
             {
@@ -151,7 +159,7 @@ void runCommandLoop(Graph& graph)
                     throw std::invalid_argument("trailing characters");   
                 }
             }
-            catch (const std::exception& e)
+            catch (const std::exception&)
             {
                 reply({{"error", "ID's must be numbers."}});
                 continue; 
@@ -162,7 +170,47 @@ void runCommandLoop(Graph& graph)
                 reply(json{{"error", "unknown game id"}});
                 continue;
             }
+            std::vector<const Game*> result;
+            size_t visitedCount = 0;
+            auto start = std::chrono::steady_clock::now();
+            if (algo == "bfs")
+                result = graph.bfs(fromId, toId, visitedCount);
+            else
+                result = graph.dijkstra(fromId, toId, visitedCount);
+            auto stop = std::chrono::steady_clock::now();
+            long long timeUs =
+                std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
+            // Path nodes, start to end (empty when there's no path).
+            json pathNodes = json::array();
+            for (const Game* g : result)
+                pathNodes.push_back(gameToJson(*g));
+
+            // One edge per consecutive pair; the weight comes from the first node's neighbor list.
+            json edges = json::array();
+            for (size_t i = 0; i + 1 < result.size(); i++)
+            {
+                int a = result[i]->id;
+                int b = result[i + 1]->id;
+                int weight = -1;                     // -1 only if the edge isn't found (would be a bug)
+                if (const auto* neighbors = graph.getNeighbors(a))
+                {
+                    for (const auto& n : *neighbors)
+                    {
+                        if (n.first->id == b) { weight = n.second; break; }
+                    }
+                }
+                edges.push_back({{"from", a}, {"to", b}, {"weight", weight}});
+            }
+
+            reply(json{
+                {"algo", algo},
+                {"found", !result.empty()},
+                {"time_us", timeUs},
+                {"visited", visitedCount},
+                {"path", pathNodes},
+                {"edges", edges},
+            });
 
 
            

@@ -77,7 +77,6 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
             break;
         
         
-        std::getline(file, line);
         // Strip the '\r' left by Windows line endings.
         if (!line.empty() && line.back() == '\r') line.pop_back();
 
@@ -102,7 +101,7 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
         {
             g.publishers.push_back(piece);
         }
-        g.v_index = i;
+        g.v_index = static_cast<int>(games.size());;
         games.emplace(g.id, g);
     }
     return true;
