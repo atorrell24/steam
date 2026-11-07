@@ -29,7 +29,7 @@ def make_graph(node_dict, edge_dict, game1, game2):
 
 graph_config = Config(width="stretch",
                 height=750,
-                directed=True,
+                directed=False,
                 physics=True,
                 hierarchical=False,
                 highlightColor='#FF00FF',
