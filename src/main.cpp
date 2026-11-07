@@ -7,6 +7,8 @@
 #include "../lib/csv/csv_parser.h"   // Game, loadGames
 #include "../lib/graph/graph.h"      // Graph
 
+#include "../lib/protocol/protocol.h" //Frontend , command loop
+
 int main() {
     int n = 125855; // number of games. 125855
     std::cout << "SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA\n";
@@ -28,7 +30,7 @@ int main() {
      // cout << endl << endl;
      // for (auto& i : result2)
      //     cout << i->title << " " << endl;
-
+    runCommandLoop(steamGraph);
     return 0;
 
 }

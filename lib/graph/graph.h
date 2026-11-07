@@ -17,6 +17,11 @@ public:
 
     Graph(unordered_map<int, Game>& gamelist);
     Graph(unordered_map<int, Game>& gamelist, ifstream& graphf);
+    
+    const unordered_map<int, Game>& getGames() const;
+    const vector<pair<const Game*, int>>* getNeighbors(int gameid) const;
+    
+    
     map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromID(int gameid);
     map<Game, vector<pair<const Game*, int>>>::iterator findNodeFromTitle(string& title);
     vector<const Game*> dijkstra(int from, int to);
