@@ -4,8 +4,6 @@ import sys
 from pathlib import Path
 
 from streamlit_agraph import agraph, Node, Edge, Config
-# import requests
-# import numpy as np
 import pandas as pd
 from time import time
 
