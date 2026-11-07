@@ -8,7 +8,7 @@ import pandas as pd
 from time import time
 
 from frontend_graph_make import make_graph, graph_config
-from backend import Backend, BackendError, BackendDiedError
+from backend_client import Backend, BackendError, BackendDiedError
 
 #---To-Do List :)
 #general
