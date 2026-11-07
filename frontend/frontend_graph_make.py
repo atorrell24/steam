@@ -1,11 +1,11 @@
 import streamlit as st
-import json
+#import json
 
 from streamlit_agraph import agraph, Node, Edge, Config
-import requests
-import numpy as np
-import pandas as pd
-from time import time
+# import requests
+# import numpy as np
+# import pandas as pd
+# from time import time
 
 # @st.cache_data
 # def load_data_a(returned_graph):
@@ -31,12 +31,9 @@ def make_graph(node_dict, edge_dict, game1, game2):
         id = data["id"]
         node_color = "#808080"
 
-    #!!!!change game# names + make it a fstring
         if data["id"] == game2 : node_color = "#FF0000" #red
         if data["id"] == game1 : node_color = "#023E8A" #blue
 
-        #create node
-        #create edge if target != None
         id_title_dict[id] = name
         nodes.append(Node(id=name, label=name, symbolType='diamond',color=node_color))
     for data in edge_dict:

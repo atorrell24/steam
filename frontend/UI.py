@@ -1,11 +1,11 @@
 import streamlit as st
-import json
+#import json
 import sys
 from pathlib import Path
 
 from streamlit_agraph import agraph, Node, Edge, Config
-import requests
-import numpy as np
+# import requests
+# import numpy as np
 import pandas as pd
 from time import time
 
@@ -39,6 +39,8 @@ game1 = {}
 game2 = {}
 algo = ""
 df = 0
+
+#Ensures Consistency Across every re-run action
 if "algo_result" not in st.session_state:
     st.session_state.algo_result = None
 if "algo_time" not in st.session_state:
@@ -47,19 +49,18 @@ if "algo_visited" not in st.session_state:
     st.session_state.algo_visited = None
 if "graph_data" not in st.session_state:
     st.session_state.graph_data = None
-
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "Games & Algorithms"
-def switch_tab(tab_name):
-    st.session_state.active_tab = tab_name
 
+#HomePAge Division of left=graph and right=info
 st.set_page_config(layout="wide")
 col1, col2 = st.columns([3, 1])
 
+#Information column
 with col2:
     st.space("medium")
     tab1, tab2 = st.tabs(["Games & Algorithms", "Additional Info"], key="active_tab")
-    with tab1:
+    with tab1: #Games & Algorithms
     #Game Title Selections
     #!!! needs error statements for if search doesn't find game--------------------------*****
         game_title1 = st.text_input("Game Title #1", key="game1_input")
@@ -100,7 +101,7 @@ with col2:
             st.markdown(f"**Time Taken:** {st.session_state.algo_time} μs")
             st.markdown(f"**Nodes Touched:** {st.session_state.algo_visited}")
 
-    with tab2:
+    with tab2: #Additional Info
         st.markdown("""
             <style>
             div[data-testid="stExpander"] details summary p {
@@ -109,6 +110,7 @@ with col2:
             }
             </style>
             """, unsafe_allow_html=True)
+        #Listed all info in expanded sections
         if st.session_state.algo_result is not None:
             for game in st.session_state.algo_result["path"]:
                 with st.expander(game["title"]):
@@ -126,7 +128,7 @@ with col2:
                     tag_list = tag_list[:-2]
                     st.write(tag_list)
 
-with col1:
+with col1: #GRAPH DISPLAY :)
     st.title('Steam Game Recommender', text_alignment="center")
     if st.session_state.graph_data is not None:
         nodes, edges = st.session_state.graph_data
