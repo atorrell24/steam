@@ -15,6 +15,8 @@ class Graph
 public:
     Graph(std::unordered_map<int, Game>& gamelist);
     Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf);
+    const std::unordered_map<int, Game>& getGames() const;
+    const std::vector<std::pair<Game, int>>* getNeighbors(int gameid) const;
     std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromID(int gameid);
     std::map<Game, vector<pair<Game, int>>>::iterator findNodeFromTitle(string& title);
 

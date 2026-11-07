@@ -19,4 +19,4 @@ struct Game
     void printmask();
 };
 
-bool loadGames(const std::string& path, std::unordered_map<int, Game>& games), int n;
+bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, int n);

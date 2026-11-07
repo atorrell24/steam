@@ -104,6 +104,20 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist) : games(std::move(gamelist
     }
 }
 
+const std::unordered_map<int, Game>& Graph::getGames() const
+{
+    return games;
+}
+
+const std::vector<std::pair<Game, int>>* Graph::getNeighbors(int gameid) const
+{
+    auto g = games.find(gameid);              
+    if (g == games.end()) return nullptr;     
+    auto node = adj.find(g->second);        
+    if (node == adj.end()) return nullptr;    
+    return &node->second;
+}
+
 Graph::Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf) : games(std::move(gamelist))
 {
     string line;
@@ -122,6 +136,10 @@ Graph::Graph(std::unordered_map<int, Game>& gamelist, std::ifstream& graphf) : g
             adj[source].emplace_back(connection);
         }
     }
+    v = adj.size();
+    e = 0;
+    for (auto& node : adj)
+        e += node.second.size();
 }
 
 std::map<Game, vector<pair<Game, int>>>::iterator Graph::findNodeFromID(int gameid)
