@@ -14,12 +14,16 @@ from backend_client import Backend, BackendError, BackendDiedError
 #       spark warning if game1 or game2 not found
 
 #------To Run in local terminal: streamlit run frontend/UI.py
+@st.cache_resource
+def load_data():
+    here = Path(__file__).resolve().parent   # the folder this file is in
+    steam_dir = here.parent
+    b = Backend([str(steam_dir / "steam_backend.exe")],
+                log_path=str(here / "backend_log.txt"),
+                cwd=str(steam_dir))
+    return b
 
-here = Path(__file__).resolve().parent   # the folder this file is in
-steam_dir = here.parent
-b = Backend([str(steam_dir / "steam_backend.exe")],
-            log_path=str(here / "backend_log.txt"),
-            cwd=str(steam_dir))
+b = load_data()
 
 game1 = {}
 game2 = {}
