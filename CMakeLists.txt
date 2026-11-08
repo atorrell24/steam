@@ -11,4 +11,6 @@ add_executable(steam
         lib/graph/graph.cpp
         lib/graph/graph.h
         lib/csv/csv_parser.h
-        lib/csv/csv_parser.cpp)
+        lib/csv/csv_parser.cpp
+        lib/protocol/protocol.h
+        lib/protocol/protocol.cpp)

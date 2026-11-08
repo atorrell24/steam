@@ -10,9 +10,6 @@ from time import time
 from frontend_graph_make import make_graph, graph_config
 from backend_client import Backend, BackendError, BackendDiedError
 
-#---To-Do List :)
-#       spark warning if game1 or game2 not found
-
 #------To Run in local terminal: streamlit run frontend/UI.py
 @st.cache_resource
 def load_data():
@@ -125,7 +122,6 @@ with col2:
                         tag_list += f"{tag}, "
                     tag_list = tag_list[:-2]
                     st.write(tag_list)
-                    print("Tags: ", game["tags"])
 
 with col1: #GRAPH DISPLAY :)
     st.title('Steam Game Recommender', text_alignment="center")
