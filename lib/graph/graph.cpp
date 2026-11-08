@@ -120,6 +120,23 @@ Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(
     e = games.size() * k;
     index_table.resize(v);
     string line;
+    vector<string> ls = generateTagList(); //index of tag = vector index
+
+    //set tags
+    for (auto& i : games)
+    {
+        set<int> addedtags;
+        while (i.second.tags.size() < t) //ensures 10 unique tags
+        {
+            int rngtag = dist(gen);
+            if (addedtags.count(rngtag) == 0)
+            {
+                i.second.tags.emplace_back(ls[rngtag]);
+                addedtags.insert(rngtag);
+            }
+        }
+    }
+
     while (getline(graphf, line))
     {
         stringstream ss(line);
