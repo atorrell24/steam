@@ -30,6 +30,6 @@ public:
 
     int V();
     int E();
+    void printtags();
     void print();
-
 };
