@@ -136,10 +136,6 @@ Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(
         }
         index_table[source.v_index] = &adj.find(source)->first; //index_table associates games with indices
     }
-    v = adj.size();
-    e = 0;
-    for (auto& node : adj)
-        e += node.second.size();
 }
 
 map<Game, vector<pair<const Game*, int>>>::iterator Graph::findNodeFromID(int gameid)
