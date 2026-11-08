@@ -59,12 +59,20 @@ with col2:
     #!!! needs error statements for if search doesn't find game--------------------------*****
         game_title1 = st.text_input("Game Title #1", key="game1_input")
         if game_title1 != "":
-            game1 = b.search(game_title1)[0]
-            st.markdown(f"Game Selected: {game1["title"]}")
+            searched = b.search(game_title1)
+            if not searched:
+                st.warning('Game Not Found', icon="⚠️")
+            else:
+                game1 = searched[0]
+                st.markdown(f"Game Selected: {game1["title"]}")
         game_title2 = st.text_input("Game Title #2", key="game2_input")
         if game_title2 != "":
-            game2 = b.search(game_title2)[0]
-            st.markdown(f"Game Selected: {game2["title"]}")
+            searched = b.search(game_title2)
+            if not searched:
+                st.warning('Game Not Found', icon="⚠️")
+            else:
+                game2 = searched[0]
+                st.markdown(f"Game Selected: {game2["title"]}")
     #Algorithm Selection:
         algo_options = ["Dijkstra", "BFS"]
         selection = st.segmented_control("Select Algorithm", algo_options, selection_mode="single")
@@ -73,7 +81,7 @@ with col2:
     #Button to Run Algorthm
         if st.button("Run Algorithm", type="primary", width="stretch"):
             if (game_title1 == "") or (game_title2 == "") or (selection is None):
-                st.warning('Empty Input Detected ', icon="⚠️")
+                st.warning('Empty Input Detected', icon="⚠️")
             else:
                 #verify game1 & 2 exist by calling search
                 #call path(algo, from_id, to_id):
@@ -111,16 +119,17 @@ with col2:
                     st.write(f"Game ID: {game["id"]}")
                     pubs = "Publisher(s): "
                     for publisher in game["publishers"]:
-                        pubs += f"\t{publisher}, "
+                        pubs += f"{publisher}, "
                     pubs = pubs[:-2]
                     st.write(pubs)
                     st.write(f"Release Date: {game["releaseDate"]}")
                     st.write(f"Bought By: {game["owners"]} players")
-                    tag_list = "Tags: "
+                    tag_list = "Tags:  "
                     for tag in game["tags"]:
-                        tag_list += f"\t{tag}, "
+                        tag_list += f"{tag}, "
                     tag_list = tag_list[:-2]
                     st.write(tag_list)
+                    print("Tags: ", game["tags"])
 
 with col1: #GRAPH DISPLAY :)
     st.title('Steam Game Recommender', text_alignment="center")
