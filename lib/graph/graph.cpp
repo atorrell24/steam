@@ -88,7 +88,15 @@ Graph::Graph(unordered_map<int, Game>& gamelist) : games(move(gamelist))
     for (auto& i : adj)
     {
         graphf << i.first.id << ",";
+        //add tags to csv
         const char* sep = "";
+        for (int j = 0; j < t; j++) {
+            graphf << sep << i.first.tags[j];
+            sep = ",";
+        }
+        graphf << endl;
+
+        sep = "";
         for (auto& j : i.second)
         {
             graphf << sep << j.first->id << "," << j.second;
@@ -119,39 +127,36 @@ Graph::Graph(unordered_map<int, Game>& gamelist, ifstream& graphf) : games(move(
     v = games.size();
     e = games.size() * k;
     index_table.resize(v);
-    string line;
-    vector<string> ls = generateTagList(); //index of tag = vector index
 
-    //set tags
-    for (auto& i : games)
+    for (int i = 0; i < v; i++)
     {
-        set<int> addedtags;
-        while (i.second.tags.size() < t) //ensures 10 unique tags
-        {
-            int rngtag = dist(gen);
-            if (addedtags.count(rngtag) == 0)
-            {
-                i.second.tags.emplace_back(ls[rngtag]);
-                addedtags.insert(rngtag);
-            }
+        string line1;
+        getline(graphf, line1);
+        stringstream ss(line1);
+        string sourceid;
+        getline(ss, sourceid, ','); //source node id
+
+        //populate tags
+        for (int i = 0; i < t; i++) {
+            string tag;
+            getline(ss, tag, ',');
+            games[stoi(sourceid)].tags.emplace_back(tag);
         }
-    }
-
-    while (getline(graphf, line))
-    {
-        stringstream ss(line);
+        //add connections
+        string line2;
+        getline(graphf, line2);
+        stringstream ss2(line2);
         string node;
-        getline(ss, node, ','); //source node
-        Game source = games[stoi(node)];
-        for (int i = 0; i < k; i++)
-        {
-            getline(ss, node, ',');
+        Game source = games[stoi(sourceid)];
+
+        for (int i = 0; i < k; i++) {
+            getline(ss2, node, ',');
             string weight;
-            getline(ss, weight, ',');
-            pair<Game*, int> connection = {&games[stoi(node)], stoi(weight)};
+            getline(ss2, weight, ',');
+            pair<const Game*, int> connection = {&games[stoi(node)], stoi(weight)};
             adj[source].emplace_back(connection);
         }
-        index_table[source.v_index] = &adj.find(source)->first; //index_table associates games with indices
+        index_table[source.v_index] = &games[stoi(sourceid)]; //index_table associates games with indices
     }
 }
 
@@ -270,6 +275,19 @@ int Graph::E()
     return e;
 }
 
+void Graph::printtags()
+{
+    for (auto& i : adj)
+    {
+        cout << i.first.title << " (" << i.first.id << ") - ";
+        for (auto& j : i.first.tags)
+        {
+            cout << j << ",";
+        }
+        cout << endl;
+    }
+}
+
 void Graph::print()
 {
     for (auto& i : adj)
@@ -279,8 +297,6 @@ void Graph::print()
         {
             cout << j.first->title << " " << j.second << ", ";
         }
-        cout << endl;
+        cout << endl << endl;
     }
 }
-
-
