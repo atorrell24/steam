@@ -22,8 +22,8 @@ int main() {
     std::ifstream graphf("lib/graph/graph.csv");
 
     Graph steamGraph ((!graphf) ? Graph(games) : Graph(games, graphf)); //if no graph.csv, build from db, else, build from graph.csv
-
-    runCommandLoop(steamGraph);
+    // steamGraph.print();
+    // runCommandLoop(steamGraph);
     return 0;
 
 }
