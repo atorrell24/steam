@@ -77,6 +77,7 @@ bool loadGames(const std::string& path, std::unordered_map<int, Game>& games, in
             break;
         
         
+        
         // Strip the '\r' left by Windows line endings.
         if (!line.empty() && line.back() == '\r') line.pop_back();
 
