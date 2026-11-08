@@ -15,14 +15,6 @@ from backend_client import Backend, BackendError, BackendDiedError
 
 #------To Run in local terminal: streamlit run frontend/UI.py
 
-
-@st.cache_data
-def load_data_a(returned_data):
-    with open(returned_data, 'r') as file:
-        for line in file:
-            df = pd.read_json(line.rstrip('\n'))
-            return df
-
 here = Path(__file__).resolve().parent   # the folder this file is in
 steam_dir = here.parent
 b = Backend([str(steam_dir / "steam_backend.exe")],
