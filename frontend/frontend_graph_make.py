@@ -28,7 +28,7 @@ def make_graph(node_dict, edge_dict, game1, game2):
     return [nodes, edges]
 
 graph_config = Config(width="stretch",
-                height=750,
+                height=650,
                 directed=False,
                 physics=True,
                 hierarchical=False,
