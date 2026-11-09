@@ -15,8 +15,8 @@ def make_graph(node_dict, edge_dict, game1, game2):
         id = data["id"]
         node_color = "#808080"
 
-        if data["id"] == game2 : node_color = "#FF0000" #red
-        if data["id"] == game1 : node_color = "#023E8A" #blue
+        if data["id"] == game1 : node_color = "#FF0000" #red
+        if data["id"] == game2 : node_color = "#023E8A" #blue
 
         id_title_dict[id] = name
         nodes.append(Node(id=name, label=name, symbolType='diamond',color=node_color))
@@ -28,7 +28,7 @@ def make_graph(node_dict, edge_dict, game1, game2):
     return [nodes, edges]
 
 graph_config = Config(width="stretch",
-                height=650,
+                height=550,
                 directed=False,
                 physics=True,
                 hierarchical=False,

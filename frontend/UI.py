@@ -125,8 +125,8 @@ with col2:
 
 with col1: #GRAPH DISPLAY :)
     st.title('S.T.E.A.M', text_alignment="center")
-    st.subheader("SYSTEM FOR THEMATICALLY EVALUATING ARRAYS OF MEDIA", text_alignment="center")
-    st.markdown("Recommending You New Games Through Ones You Already Know!", text_alignment="center" )
+    st.subheader("System for Thematically Evaluating Arrays of Media", text_alignment="center")
+    st.markdown("Bridging Games You Know to Find Games You Don't!", text_alignment="center")
     if st.session_state.graph_data is not None:
         nodes, edges = st.session_state.graph_data
         final_graph = agraph(nodes=nodes, edges=edges, config=graph_config)
