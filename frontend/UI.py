@@ -21,7 +21,7 @@ def load_data():
     return b
 
 b = load_data()
-
+print()
 game1 = {}
 game2 = {}
 algo = ""
